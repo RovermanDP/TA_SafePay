@@ -3,6 +3,10 @@ import { TransactionTable } from "../components/TransactionTable";
 import { sampleTransactions } from "../services/api";
 
 export function DashboardPage() {
+  const total = sampleTransactions.length;
+  const held = sampleTransactions.filter((t) => t.status === "held").length;
+  const blocked = sampleTransactions.filter((t) => t.status === "blocked").length;
+
   return (
     <main className="page">
       <header className="hero">
@@ -16,9 +20,9 @@ export function DashboardPage() {
       </header>
 
       <section className="summary-grid">
-        <RiskSummaryCard title="실시간 거래" value="128건" tone="neutral" />
-        <RiskSummaryCard title="의심 거래" value="12건" tone="warning" />
-        <RiskSummaryCard title="차단 거래" value="4건" tone="danger" />
+        <RiskSummaryCard title="실시간 거래" value={`${total}건`} tone="neutral" />
+        <RiskSummaryCard title="의심 거래" value={`${held}건`} tone="warning" />
+        <RiskSummaryCard title="차단 거래" value={`${blocked}건`} tone="danger" />
       </section>
 
       <TransactionTable items={sampleTransactions} />
