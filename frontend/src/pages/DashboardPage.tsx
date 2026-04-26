@@ -1,11 +1,24 @@
+import { useEffect, useState } from "react";
 import { RiskSummaryCard } from "../components/RiskSummaryCard";
 import { TransactionTable } from "../components/TransactionTable";
-import { sampleTransactions } from "../services/api";
+import { fetchTransactions } from "../services/api";
+import { Transaction } from "../types/transaction";
 
 export function DashboardPage() {
-  const total = sampleTransactions.length;
-  const held = sampleTransactions.filter((t) => t.status === "held").length;
-  const blocked = sampleTransactions.filter((t) => t.status === "blocked").length;
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchTransactions()
+      .then(setTransactions)
+      .catch((e: Error) => setError(e.message))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const total = transactions.length;
+  const held = transactions.filter((t) => t.status === "held").length;
+  const blocked = transactions.filter((t) => t.status === "blocked").length;
 
   return (
     <main className="page">
@@ -20,12 +33,14 @@ export function DashboardPage() {
       </header>
 
       <section className="summary-grid">
-        <RiskSummaryCard title="실시간 거래" value={`${total}건`} tone="neutral" />
-        <RiskSummaryCard title="의심 거래" value={`${held}건`} tone="warning" />
-        <RiskSummaryCard title="차단 거래" value={`${blocked}건`} tone="danger" />
+        <RiskSummaryCard title="실시간 거래" value={loading ? "..." : `${total}건`} tone="neutral" />
+        <RiskSummaryCard title="의심 거래" value={loading ? "..." : `${held}건`} tone="warning" />
+        <RiskSummaryCard title="차단 거래" value={loading ? "..." : `${blocked}건`} tone="danger" />
       </section>
 
-      <TransactionTable items={sampleTransactions} />
+      {error && <p className="error-message">{error}</p>}
+
+      <TransactionTable items={transactions} />
     </main>
   );
 }
