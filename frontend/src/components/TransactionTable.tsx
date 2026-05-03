@@ -2,6 +2,8 @@ import { Transaction } from "../types/transaction";
 
 type TransactionTableProps = {
   items: Transaction[];
+  onRefresh?: () => void;
+  loading?: boolean;
 };
 
 const riskLevelLabel: Record<string, string> = {
@@ -10,11 +12,21 @@ const riskLevelLabel: Record<string, string> = {
   danger: "위험",
 };
 
-export function TransactionTable({ items }: TransactionTableProps) {
+export function TransactionTable({ items, onRefresh, loading }: TransactionTableProps) {
   return (
     <section className="table-card">
       <div className="table-header">
         <h2>의심 거래 목록</h2>
+        {onRefresh && (
+          <button
+            type="button"
+            className="refresh-button"
+            onClick={onRefresh}
+            disabled={loading}
+          >
+            {loading ? "불러오는 중..." : "새로고침"}
+          </button>
+        )}
       </div>
       <table>
         <thead>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { RiskSummaryCard } from "../components/RiskSummaryCard";
 import { TransactionTable } from "../components/TransactionTable";
 import { fetchTransactions } from "../services/api";
@@ -9,12 +9,18 @@ export function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const loadTransactions = useCallback(() => {
+    setLoading(true);
+    setError(null);
     fetchTransactions()
       .then(setTransactions)
       .catch((e: Error) => setError(e.message))
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    loadTransactions();
+  }, [loadTransactions]);
 
   const total = transactions.length;
   const held = transactions.filter((t) => t.status === "held").length;
@@ -40,7 +46,7 @@ export function DashboardPage() {
 
       {error && <p className="error-message">{error}</p>}
 
-      <TransactionTable items={transactions} />
+      <TransactionTable items={transactions} onRefresh={loadTransactions} loading={loading} />
     </main>
   );
 }
