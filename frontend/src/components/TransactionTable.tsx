@@ -12,6 +12,12 @@ const riskLevelLabel: Record<string, string> = {
   danger: "위험",
 };
 
+const statusLabel: Record<string, string> = {
+  approved: "승인",
+  held: "보류",
+  blocked: "차단",
+};
+
 export function TransactionTable({ items, onRefresh, loading }: TransactionTableProps) {
   return (
     <section className="table-card">
@@ -61,7 +67,11 @@ export function TransactionTable({ items, onRefresh, loading }: TransactionTable
                     {riskLevelLabel[item.riskLevel] ?? item.riskLevel}
                   </span>
                 </td>
-                <td>{item.status}</td>
+                <td>
+                  <span className={`badge status-${item.status}`}>
+                    {statusLabel[item.status] ?? item.status}
+                  </span>
+                </td>
                 <td>{new Date(item.purchasedAt).toLocaleString("ko-KR")}</td>
               </tr>
             ))
