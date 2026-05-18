@@ -1,9 +1,13 @@
 import { Transaction } from "../types/transaction";
 
+export type RiskFilter = "all" | "normal" | "suspicious" | "danger";
+
 type TransactionTableProps = {
   items: Transaction[];
   onRefresh?: () => void;
   loading?: boolean;
+  riskFilter?: RiskFilter;
+  onRiskFilterChange?: (value: RiskFilter) => void;
 };
 
 const riskLevelLabel: Record<string, string> = {
@@ -18,21 +22,41 @@ const statusLabel: Record<string, string> = {
   blocked: "차단",
 };
 
-export function TransactionTable({ items, onRefresh, loading }: TransactionTableProps) {
+export function TransactionTable({
+  items,
+  onRefresh,
+  loading,
+  riskFilter,
+  onRiskFilterChange,
+}: TransactionTableProps) {
   return (
     <section className="table-card">
       <div className="table-header">
         <h2>의심 거래 목록</h2>
-        {onRefresh && (
-          <button
-            type="button"
-            className="refresh-button"
-            onClick={onRefresh}
-            disabled={loading}
-          >
-            {loading ? "불러오는 중..." : "새로고침"}
-          </button>
-        )}
+        <div className="table-actions">
+          {onRiskFilterChange && (
+            <select
+              className="filter-select"
+              value={riskFilter ?? "all"}
+              onChange={(e) => onRiskFilterChange(e.target.value as RiskFilter)}
+            >
+              <option value="all">전체 등급</option>
+              <option value="normal">정상</option>
+              <option value="suspicious">의심</option>
+              <option value="danger">위험</option>
+            </select>
+          )}
+          {onRefresh && (
+            <button
+              type="button"
+              className="refresh-button"
+              onClick={onRefresh}
+              disabled={loading}
+            >
+              {loading ? "불러오는 중..." : "새로고침"}
+            </button>
+          )}
+        </div>
       </div>
       <table>
         <thead>

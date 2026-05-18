@@ -122,6 +122,27 @@ body {
   color: #991b1b;
 }
 
+.table-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-select {
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #1e293b;
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.filter-select:hover {
+  border-color: #94a3b8;
+}
+
 .refresh-button {
   padding: 8px 16px;
   border: 1px solid #cbd5e1;

@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { RiskSummaryCard } from "../components/RiskSummaryCard";
-import { TransactionTable } from "../components/TransactionTable";
+import { TransactionTable, RiskFilter } from "../components/TransactionTable";
 import { fetchTransactions } from "../services/api";
 import { Transaction } from "../types/transaction";
 
@@ -8,6 +8,7 @@ export function DashboardPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [riskFilter, setRiskFilter] = useState<RiskFilter>("all");
 
   const loadTransactions = useCallback(() => {
     setLoading(true);
@@ -25,6 +26,14 @@ export function DashboardPage() {
   const total = transactions.length;
   const held = transactions.filter((t) => t.status === "held").length;
   const blocked = transactions.filter((t) => t.status === "blocked").length;
+
+  const filteredTransactions = useMemo(
+    () =>
+      riskFilter === "all"
+        ? transactions
+        : transactions.filter((t) => t.riskLevel === riskFilter),
+    [transactions, riskFilter]
+  );
 
   return (
     <main className="page">
@@ -46,7 +55,13 @@ export function DashboardPage() {
 
       {error && <p className="error-message">{error}</p>}
 
-      <TransactionTable items={transactions} onRefresh={loadTransactions} loading={loading} />
+      <TransactionTable
+        items={filteredTransactions}
+        onRefresh={loadTransactions}
+        loading={loading}
+        riskFilter={riskFilter}
+        onRiskFilterChange={setRiskFilter}
+      />
     </main>
   );
 }
