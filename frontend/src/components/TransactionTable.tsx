@@ -4,6 +4,7 @@ export type RiskFilter = "all" | "normal" | "suspicious" | "danger";
 
 type TransactionTableProps = {
   items: Transaction[];
+  totalCount?: number;
   onRefresh?: () => void;
   loading?: boolean;
   riskFilter?: RiskFilter;
@@ -24,15 +25,24 @@ const statusLabel: Record<string, string> = {
 
 export function TransactionTable({
   items,
+  totalCount,
   onRefresh,
   loading,
   riskFilter,
   onRiskFilterChange,
 }: TransactionTableProps) {
+  const isFiltered = riskFilter && riskFilter !== "all";
+  const total = totalCount ?? items.length;
+
   return (
     <section className="table-card">
       <div className="table-header">
-        <h2>의심 거래 목록</h2>
+        <div className="table-title">
+          <h2>의심 거래 목록</h2>
+          <span className="table-count">
+            {isFiltered ? `전체 ${total}건 중 ${items.length}건` : `총 ${total}건`}
+          </span>
+        </div>
         <div className="table-actions">
           {onRiskFilterChange && (
             <select
@@ -75,7 +85,9 @@ export function TransactionTable({
           {items.length === 0 ? (
             <tr>
               <td colSpan={8} style={{ textAlign: "center", color: "#888" }}>
-                거래 데이터가 없습니다.
+                {isFiltered
+                  ? "해당 등급의 거래가 없습니다."
+                  : "거래 데이터가 없습니다."}
               </td>
             </tr>
           ) : (

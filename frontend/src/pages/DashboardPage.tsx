@@ -57,6 +57,7 @@ export function DashboardPage() {
 
       <TransactionTable
         items={filteredTransactions}
+        totalCount={total}
         onRefresh={loadTransactions}
         loading={loading}
         riskFilter={riskFilter}

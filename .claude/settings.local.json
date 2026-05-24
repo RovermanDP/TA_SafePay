@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip show *)",
+      "Bash(pip install *)",
+      "Bash(python generate_requirements_pdf.py)",
+      "PowerShell(python -c \"import reportlab; print\\(reportlab.Version\\)\")",
+      "PowerShell(python C:\\\\SafePay\\\\docs\\\\generate_requirements_analysis_pdf.py)",
+      "Bash(python generate_design_pdf.py)",
+      "Bash(python *)"
+    ]
+  }
+}

@@ -122,6 +122,21 @@ body {
   color: #991b1b;
 }
 
+.table-title {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.table-title h2 {
+  margin: 0;
+}
+
+.table-count {
+  font-size: 13px;
+  color: #64748b;
+}
+
 .table-actions {
   display: flex;
   align-items: center;
