@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { RiskSummaryCard } from "../components/RiskSummaryCard";
-import { TransactionTable, RiskFilter } from "../components/TransactionTable";
+import { TransactionTable, RiskFilter, SortBy } from "../components/TransactionTable";
 import { fetchTransactions } from "../services/api";
 import { Transaction } from "../types/transaction";
 
@@ -9,6 +9,7 @@ export function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [riskFilter, setRiskFilter] = useState<RiskFilter>("all");
+  const [sortBy, setSortBy] = useState<SortBy>("recent");
 
   const loadTransactions = useCallback(() => {
     setLoading(true);
@@ -27,13 +28,17 @@ export function DashboardPage() {
   const held = transactions.filter((t) => t.status === "held").length;
   const blocked = transactions.filter((t) => t.status === "blocked").length;
 
-  const filteredTransactions = useMemo(
-    () =>
+  const visibleTransactions = useMemo(() => {
+    const filtered =
       riskFilter === "all"
         ? transactions
-        : transactions.filter((t) => t.riskLevel === riskFilter),
-    [transactions, riskFilter]
-  );
+        : transactions.filter((t) => t.riskLevel === riskFilter);
+
+    if (sortBy === "risk") {
+      return [...filtered].sort((a, b) => b.riskScore - a.riskScore);
+    }
+    return filtered;
+  }, [transactions, riskFilter, sortBy]);
 
   return (
     <main className="page">
@@ -56,12 +61,14 @@ export function DashboardPage() {
       {error && <p className="error-message">{error}</p>}
 
       <TransactionTable
-        items={filteredTransactions}
+        items={visibleTransactions}
         totalCount={total}
         onRefresh={loadTransactions}
         loading={loading}
         riskFilter={riskFilter}
         onRiskFilterChange={setRiskFilter}
+        sortBy={sortBy}
+        onSortByChange={setSortBy}
       />
     </main>
   );

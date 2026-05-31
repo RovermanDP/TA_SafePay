@@ -1,6 +1,7 @@
 import { Transaction } from "../types/transaction";
 
 export type RiskFilter = "all" | "normal" | "suspicious" | "danger";
+export type SortBy = "recent" | "risk";
 
 type TransactionTableProps = {
   items: Transaction[];
@@ -9,6 +10,8 @@ type TransactionTableProps = {
   loading?: boolean;
   riskFilter?: RiskFilter;
   onRiskFilterChange?: (value: RiskFilter) => void;
+  sortBy?: SortBy;
+  onSortByChange?: (value: SortBy) => void;
 };
 
 const riskLevelLabel: Record<string, string> = {
@@ -30,6 +33,8 @@ export function TransactionTable({
   loading,
   riskFilter,
   onRiskFilterChange,
+  sortBy,
+  onSortByChange,
 }: TransactionTableProps) {
   const isFiltered = riskFilter && riskFilter !== "all";
   const total = totalCount ?? items.length;
@@ -54,6 +59,16 @@ export function TransactionTable({
               <option value="normal">정상</option>
               <option value="suspicious">의심</option>
               <option value="danger">위험</option>
+            </select>
+          )}
+          {onSortByChange && (
+            <select
+              className="filter-select"
+              value={sortBy ?? "recent"}
+              onChange={(e) => onSortByChange(e.target.value as SortBy)}
+            >
+              <option value="recent">최신순</option>
+              <option value="risk">위험 점수 높은순</option>
             </select>
           )}
           {onRefresh && (
